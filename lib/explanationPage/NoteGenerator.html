@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hive Note Model Explanation</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+    code {
+      color: #d63384;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container my-5">
+  <h1 class="text-center mb-4">Hive Note Model Explanation</h1>
+
+  <section>
+    <h2>1. Hive Note Model Code</h2>
+    <p>This Dart code defines the structure of the <strong>Note</strong> model used in the Hive database for storing note data. The code is structured with Hive annotations to allow Hive to serialize and deserialize the object.</p>
+    <pre><code>import 'package:hive/hive.dart';
+
+// Ensure this part statement is here and points to the correct file
+part 'note.g.dart';
+
+@HiveType(typeId: 0)
+class Note {
+  // Each field should have @HiveField annotations
+  @HiveField(0)
+  String name;
+
+  @HiveField(1)
+  String description;
+
+  @HiveField(2)
+  DateTime date;
+
+  // Constructor for Note
+  Note({
+    required this.name,
+    required this.description,
+    required this.date,
+  });
+}</code></pre>
+  </section>
+
+  <section>
+    <h2>2. Explanation of the Code</h2>
+    <p>Let's break down the Dart code to explain what each part does:</p>
+    <ul>
+      <li>
+        <code>import 'package:hive/hive.dart';</code>:
+        <p>This imports the Hive library, which is necessary to use Hive's database functionality.</p>
+      </li>
+      <li>
+        <code>part 'note.g.dart';</code>:
+        <p>This is an important directive that tells Hive where to find the generated adapter code for the Note model. The adapter will be generated automatically and stored in <strong>note.g.dart</strong>. Ensure this statement points to the correct filename.</p>
+      </li>
+      <li>
+        <code>@HiveType(typeId: 0)</code>:
+        <p>This annotation marks the class as a Hive type. The <code>typeId</code> must be unique and is used to identify the type of object stored in the Hive box. In this case, <code>typeId: 0</code> is assigned to the <strong>Note</strong> model.</p>
+      </li>
+      <li>
+        <code>@HiveField()</code>:
+        <p>Each field inside the class is marked with the <code>@HiveField()</code> annotation, which assigns a unique index to the field. This is necessary for Hive to serialize and deserialize the fields properly.</p>
+        <ul>
+          <li><code>@HiveField(0)</code>: Marks the <code>name</code> field.</li>
+          <li><code>@HiveField(1)</code>: Marks the <code>description</code> field.</li>
+          <li><code>@HiveField(2)</code>: Marks the <code>date</code> field.</li>
+        </ul>
+      </li>
+      <li>
+        <code>Note({required this.name, required this.description, required this.date});</code>:
+        <p>This is the constructor of the <strong>Note</strong> class, which ensures that <code>name</code>, <code>description</code>, and <code>date</code> are required when creating a new instance of the class.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. Instructions to Generate <code>note.g.dart</code> File</h2>
+    <p>In Hive, the <code>note.g.dart</code> file is automatically generated and contains the adapter for the <strong>Note</strong> model. Follow the steps below to generate the file:</p>
+
+    <h4>Step 1: Add Hive and Build Runner Dependencies</h4>
+    <p>Open the <code>pubspec.yaml</code> file in your Flutter project and add the following dependencies under <code>dependencies</code> and <code>dev_dependencies</code>:</p>
+    <pre><code>dependencies:
+  hive: ^2.0.5
+  hive_flutter: ^1.1.0
+
+dev_dependencies:
+  hive_generator: ^1.1.0
+  build_runner: ^2.0.0</code></pre>
+
+    <h4>Step 2: Run <code>flutter pub get</code></h4>
+    <p>In the terminal, run the following command to install the new dependencies:</p>
+    <pre><code>flutter pub get</code></pre>
+
+    <h4>Step 3: Generate the Adapter</h4>
+    <p>In the terminal, run the following command to generate the <code>note.g.dart</code> file:</p>
+    <pre><code>flutter pub run build_runner build</code></pre>
+
+    <p>This command runs the build runner, which scans for any models with Hive annotations (like <code>Note</code>) and generates the necessary adapter file (in this case, <code>note.g.dart</code>).</p>
+
+    <h4>Step 4: Check the Generated <code>note.g.dart</code> File</h4>
+    <p>Once the build completes, you should find the <code>note.g.dart</code> file in the same directory as your <code>note.dart</code> file. The generated file will contain the adapter for serializing and deserializing the <strong>Note</strong> model.</p>
+
+    <p><strong>Example of Generated Code in <code>note.g.dart</code>:</strong></p>
+    <pre><code>class NoteAdapter extends TypeAdapter&lt;Note&gt; {
+  @override
+  final int typeId = 0;
+
+  @override
+  Note read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = &lt;int, dynamic&gt;{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Note(
+      name: fields[0] as String,
+      description: fields[1] as String,
+      date: fields[2] as DateTime,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Note obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.description)
+      ..writeByte(2)
+      ..write(obj.date);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NoteAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}</code></pre>
+    <p>This is the automatically generated code that allows Hive to serialize and deserialize the <code>Note</code> model.</p>
+  </section>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

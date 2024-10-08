@@ -12,10 +12,6 @@ A simple **Flutter Notes App** with **CRUD (Create, Read, Update, Delete)** func
 - **Offline Storage**: The app uses Hive, a lightweight and fast key-value database for persistent offline storage.
 - **Responsive UI**: Fully responsive, adapting to different screen sizes and orientations.
 
-## Screenshots
-
-(Add your screenshots here for a visual presentation of the app.)
-
 ## Getting Started
 
 ### Prerequisites
